@@ -10,249 +10,212 @@
 /*
  * Peripheral Clock setup
  */
-//void GPIO_PeriClockControl(GPIO_RegDef_t *pGPIOx, uint8_t EnOrDi)
-//{
-//  if (EnOrDi == ENABLE) {
-//    switch ((uint32_t)pGPIOx) {
-//    case GPIOA_BASEADDR:
-//      GPIOA_PCLOCK_EN();
-//      break;
-//    case GPIOB_BASEADDR:
-//      GPIOB_PCLOCK_EN();
-//      break;
-//    case GPIOC_BASEADDR:
-//      GPIOC_PCLOCK_EN();
-//      break;
-//    case GPIOD_BASEADDR:
-//      GPIOD_PCLOCK_EN();
-//      break;
-//    case GPIOE_BASEADDR:
-//      GPIOE_PCLOCK_EN();
-//      break;
-//    case GPIOF_BASEADDR:
-//      GPIOF_PCLOCK_EN();
-//      break;
-//    case GPIOG_BASEADDR:
-//      GPIOG_PCLOCK_EN();
-//      break;
-//    case GPIOH_BASEADDR:
-//      GPIOH_PCLOCK_EN();
-//      break;
-//    default:
-//      break;
-//    }
-//  } else {
-//    switch ((uint32_t)pGPIOx) {
-//    case GPIOA_BASEADDR:
-//      GPIOA_PCLOCK_DI();
-//      break;
-//    case GPIOB_BASEADDR:
-//      GPIOB_PCLOCK_DI();
-//      break;
-//    case GPIOC_BASEADDR:
-//      GPIOC_PCLOCK_DI();
-//      break;
-//    case GPIOD_BASEADDR:
-//      GPIOD_PCLOCK_DI();
-//      break;
-//    case GPIOE_BASEADDR:
-//      GPIOE_PCLOCK_DI();
-//      break;
-//    case GPIOF_BASEADDR:
-//      GPIOF_PCLOCK_DI();
-//      break;
-//    case GPIOG_BASEADDR:
-//      GPIOG_PCLOCK_DI();
-//      break;
-//    case GPIOH_BASEADDR:
-//      GPIOH_PCLOCK_DI();
-//      break;
-//    default:
-//      break;
-//    }
-//  }
-//}
-//
-///*
-// * Init and De-init
-// */
-//void GPIO_Init(GPIO_Handle_t *pGPIOHandle)
-//{
-//  uint32_t temp = 0;
-//
-//  if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode <= GPIO_MODE_ANALOG) {
-//    temp = pGPIOHandle->GPIO_PinConfig.GPIO_PinMode << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-//    pGPIOHandle->pGPIOx->MODER &= ~(0x3 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-//    pGPIOHandle->pGPIOx->MODER |= temp;
-//  } else
-//  {
-//    if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_IT_FT)
-//    {
-//      EXTI->FTSR |= (0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-//      EXTI->RTSR &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-//    } else if(pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_IT_RT)
-//    {
-//      EXTI->RTSR |= (0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-//      EXTI->FTSR &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-//    } else
-//    {
-//      EXTI->FTSR |= (0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-//      EXTI->RTSR |= (0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-//    }
-//
-//    uint8_t temp1 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber / 4;
-//    uint8_t temp2 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber % 4;
-//    uint8_t portcode = GPIO_BASEADDR_TO_CODE(pGPIOHandle->pGPIOx);
-//    SYSCFG_PCLOCK_EN();
-//    SYSCFG->EXTICR[temp1] &= ~(0xF << 4 * temp2);
-//    SYSCFG->EXTICR[temp1] |= (portcode << 4 * temp2);
-//
-//    EXTI->IMR |= (0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-//  }
-//
-//  temp = 0;
-//
-//  temp = pGPIOHandle->GPIO_PinConfig.GPIO_PinSpeed << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-//  pGPIOHandle->pGPIOx->OSPEEDR &= ~(0x3 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-//  pGPIOHandle->pGPIOx->OSPEEDR |= temp;
-//
-//  temp = 0;
-//
-//  temp = pGPIOHandle->GPIO_PinConfig.GPIO_PinPuPdControl << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-//  pGPIOHandle->pGPIOx->PUPDR &= ~(0x3 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-//  pGPIOHandle->pGPIOx->PUPDR |= temp;
-//
-//  temp = 0;
-//
-//  temp = pGPIOHandle->GPIO_PinConfig.GPIO_PinOPType << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
-//  pGPIOHandle->pGPIOx->OTYPER &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-//  pGPIOHandle->pGPIOx->OTYPER |= temp;
-//
-//  if (pGPIOHandle->GPIO_PinConfig.GPIO_PinAltFunMode == GPIO_MODE_ALTFN) {
-//    uint8_t temp1, temp2;
-//    temp1 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber / 8;
-//    temp2 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber % 8;
-//    pGPIOHandle->pGPIOx->AFR[temp1] &= ~(0xF << (4 * temp2));
-//    pGPIOHandle->pGPIOx->AFR[temp1] |= (pGPIOHandle->GPIO_PinConfig.GPIO_PinAltFunMode << (4 * temp2));
-//  }
-//}
-//
-//void GPIO_DeInit(GPIO_RegDef_t *pGPIOx)
-//{
-//  switch ((uint32_t)pGPIOx) {
-//  case GPIOA_BASEADDR:
-//    GPIOA_REG_RESET();
-//    break;
-//  case GPIOB_BASEADDR:
-//    GPIOB_REG_RESET();
-//    break;
-//  case GPIOC_BASEADDR:
-//    GPIOC_REG_RESET();
-//    break;
-//  case GPIOD_BASEADDR:
-//    GPIOD_REG_RESET();
-//    break;
-//  case GPIOE_BASEADDR:
-//    GPIOE_REG_RESET();
-//    break;
-//  case GPIOF_BASEADDR:
-//    GPIOF_REG_RESET();
-//    break;
-//  case GPIOG_BASEADDR:
-//    GPIOG_REG_RESET();
-//    break;
-//  case GPIOH_BASEADDR:
-//    GPIOH_REG_RESET();
-//    break;
-//  default:
-//    break;
-//  }
-//}
-//
-///*
-// * Data Read and Write
-// */
-//uint8_t GPIO_ReadFromInputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
-//{
-//  uint8_t value;
-//  value = (uint8_t)((pGPIOx->IDR >> PinNumber) & 0x00000001);
-//  return value;
-//}
-//
-//uint16_t GPIO_ReadFromInputPort(GPIO_RegDef_t *pGPIOx)
-//{
-//  uint16_t value;
-//  value = (uint16_t)pGPIOx->IDR;
-//  return value;
-//}
-//
-//void GPIO_WriteToOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber, uint8_t Value)
-//{
-//  if (Value == GPIO_PIN_SET)
-//  {
-//     pGPIOx->ODR |= (1 << PinNumber);
-//  } else
-//  {
-//    pGPIOx->ODR &= ~(1 << PinNumber);
-//  }
-//}
-//
-//void GPIO_WriteToOutputPort(GPIO_RegDef_t *pGPIOx, uint8_t Value)
-//{
-//  pGPIOx->ODR = Value;
-//}
-//
-//void GPIO_ToggleToOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
-//{
-//  pGPIOx->ODR ^= (1 << PinNumber);
-//}
-//
-///*
-// * IRQ Configuration and ISR handling
-// */
-//void GPIO_IRQInterruptConfig(uint8_t IRQNumber, uint8_t EnOrDi)
-//{
-//  if (EnOrDi == ENABLE)
-//  {
-//    if (IRQNumber <= 31)
-//    {
-//      *NVIC_ISER0 |= (0x1 << IRQNumber);
-//    } else if (IRQNumber > 31 && IRQNumber < 64)
-//    {
-//      *NVIC_ISER1 |= (0x1 << (IRQNumber % 32));
-//    } else if (IRQNumber >= 64 &&  IRQNumber < 96)
-//    {
-//      *NVIC_ISER2 |= (0x1 << (IRQNumber % 32));
-//    }
-//  } else
-//  {
-//    if (IRQNumber <= 31)
-//    {
-//      *NVIC_ICER0 |= (0x1 << IRQNumber);
-//    } else if (IRQNumber > 31 && IRQNumber < 64)
-//    {
-//      *NVIC_ICER1 |= (0x1 << (IRQNumber % 32));
-//    } else if (IRQNumber >= 64 &&  IRQNumber < 96)
-//    {
-//      *NVIC_ICER2 |= (0x1 << (IRQNumber % 32));
-//    }
-//  }
-//}
-//
-//void GPIO_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority)
-//{
-//  uint8_t iprx = IRQNumber / 4;
-//  uint8_t iprx_section = IRQNumber % 4;
-//
-//  uint8_t shift_amount = (8 * iprx_section) + (8 - NO_PR_BITS_IMPLEMENTED);
-//  *(NVIC_PR_BASEADDR + iprx) |= (IRQPriority << shift_amount);
-////  *(NVIC_PR_BASEADDR + (iprx * 4)) |= (IRQPriority << shift_amount);
-//}
-//
-//void GPIO_IRQHandling(uint8_t PinNumber)
-//{
-//  if (EXTI->PR & (0x1 << PinNumber))
-//  {
-//    EXTI->PR |= (0x1 << PinNumber);
-//  }
-//}
+void SPI_PeriClockControl(SPI_RegDef_t *pSPIx, uint8_t EnOrDi)
+{
+  if (EnOrDi == ENABLE)
+  {
+    switch ((uint32_t)pSPIx)
+    {
+    case SPI1_BASEADDR:
+      SPI1_PCLOCK_EN();
+      break;
+    case SPI2_BASEADDR:
+      SPI2_PCLOCK_EN();
+      break;
+    case SPI3_BASEADDR:
+      SPI3_PCLOCK_EN();
+      break;
+    case SPI4_BASEADDR:
+      SPI4_PCLOCK_EN();
+      break;
+    default:
+      break;
+    }
+  } else
+  {
+    switch ((uint32_t)pSPIx)
+    {
+    case SPI1_BASEADDR:
+      SPI1_PCLOCK_DI();
+      break;
+    case SPI2_BASEADDR:
+      SPI2_PCLOCK_DI();
+      break;
+    case SPI3_BASEADDR:
+      SPI3_PCLOCK_DI();
+      break;
+    case SPI4_BASEADDR:
+      SPI4_PCLOCK_DI();
+      break;
+    default:
+      break;
+    }
+  }
+}
+
+/*
+ * Init and De-init
+ */
+void SPI_Init(SPI_Handle_t *pSPIHandle)
+{
+  SPI_PeriClockControl(pSPIHandle->pSPIx, ENABLE);
+
+  uint32_t tempreg = 0;
+
+  tempreg |= pSPIHandle->SPI_Config.SPI_DeviceMode << SPI_CR1_MSTR;
+
+  switch(pSPIHandle->SPI_Config.SPI_BusConfig)
+  {
+  case SPI_BUS_CONFIG_FD:
+    tempreg &= ~(0x1 << SPI_CR1_BDIMODE);
+    break;
+  case SPI_BUS_CONFIG_HD:
+    tempreg |= (0x1 << SPI_CR1_BDIMODE);
+    break;
+  case SPI_BUS_CONFIG_SIMPLEX_RXONLY:
+    tempreg &= ~(0x1 << SPI_CR1_BDIMODE);
+    tempreg |= (0x1 << SPI_CR1_RXONLY);
+    break;
+  default:
+    break;
+  }
+
+  tempreg |= pSPIHandle->SPI_Config.SPI_SclkSpeed << SPI_CR1_BR;
+  tempreg |= pSPIHandle->SPI_Config.SPI_CPOL << SPI_CR1_CPOL;
+  tempreg |= pSPIHandle->SPI_Config.SPI_CPHA << SPI_CR1_CPHA;
+  tempreg |= pSPIHandle->SPI_Config.SPI_SSM << SPI_CR1_SSM;
+
+  pSPIHandle->pSPIx->CR1 = tempreg;
+
+  tempreg = 0;
+  tempreg |= pSPIHandle->SPI_Config.SPI_DS << SPI_CR2_DS;
+  pSPIHandle->pSPIx->CR2 = tempreg;
+}
+
+void SPI_DeInit(SPI_RegDef_t *pSPIx)
+{
+  switch ((uint32_t)pSPIx) {
+  case SPI1_BASEADDR:
+    SPI1_REG_RESET();
+    break;
+  case SPI2_BASEADDR:
+    SPI2_REG_RESET();
+    break;
+  case SPI3_BASEADDR:
+    SPI3_REG_RESET();
+    break;
+  case SPI4_BASEADDR:
+    SPI4_REG_RESET();
+    break;
+  default:
+    break;
+  }
+}
+
+/*
+ * Data Read and Write
+ */
+void SPI_SendData(SPI_RegDef_t *pSPIx, uint8_t *pTxBuffer, uint32_t len)
+{
+  uint8_t data_size = (pSPIx->CR2 & (0xF << SPI_CR2_DS)) >> SPI_CR2_DS;
+
+  while (len > 0)
+  {
+    while (SPI_GetFlagStatus(pSPIx, SPI_TXE_FLAG) == FLAG_RESET);
+
+    if (data_size == SPI_DS_16BIT)
+    {
+      // 16-bit
+      pSPIx->DR = *((uint16_t*)pTxBuffer);
+      len--;
+      if (len > 0)
+      {
+        len--;
+        pTxBuffer += 2;
+      }
+    } else
+    {
+      // 8-bit
+      pSPIx->DR = *pTxBuffer;
+      len--;
+      pTxBuffer++;
+    }
+  }
+}
+
+void SPI_ReceiveData(SPI_RegDef_t *pSPIx, uint8_t *pRxBuffer, uint32_t len)
+{
+  uint8_t data_size = (pSPIx->CR2 & (0xF << SPI_CR2_DS)) >> SPI_CR2_DS;
+
+  while (len > 0)
+  {
+    while (SPI_GetFlagStatus(pSPIx, SPI_RXNE_FLAG) == FLAG_SET);
+
+    if (data_size == SPI_DS_16BIT)
+    {
+      // 16 bit
+      *((uint16_t*)pRxBuffer)= pSPIx->DR;
+      len -= 2;
+      pRxBuffer += 2;
+
+    } else
+    {
+      // 8 bit
+      *pRxBuffer = (uint8_t)pSPIx->DR;
+      len--;
+      pRxBuffer++;
+    }
+  }
+}
+
+/*
+ * IRQ Configuration and ISR handling
+ */
+void SPI_IRQInterruptConfig(uint8_t IRQNumber, uint8_t EnOrDi)
+{
+
+}
+
+void SPI_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority)
+{
+
+}
+
+void SPI_IRQHandling(SPI_Handle_t *pSPIHandle)
+{
+
+}
+
+/*
+ * Other Peripheral Control APIs
+ */
+uint8_t SPI_GetFlagStatus(SPI_RegDef_t *pSPIx, uint32_t FlagName)
+{
+  if (pSPIx->SR & FlagName)
+  {
+    return FLAG_SET;
+  }
+  return FLAG_RESET;
+}
+
+void SPI_PeripheralControl(SPI_RegDef_t *pSPIx, uint8_t EnOrDi)
+{
+  if (EnOrDi == ENABLE)
+  {
+    pSPIx->CR1 |= (0x1 << SPI_CR1_SPE);
+  } else
+  {
+    pSPIx->CR1 &= ~(0x1 << SPI_CR1_SPE);
+  }
+}
+
+void SPI_SSIConfig(SPI_RegDef_t *pSPIx, uint8_t EnOrDi)
+{
+  if (EnOrDi == ENABLE)
+  {
+    pSPIx->CR1 |= (0x1 << SPI_CR1_SSI);
+  } else
+  {
+    pSPIx->CR1 &= ~(0x1 << SPI_CR1_SSI);
+  }
+}

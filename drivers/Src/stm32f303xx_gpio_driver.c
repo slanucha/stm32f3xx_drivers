@@ -12,7 +12,8 @@
  */
 void GPIO_PeriClockControl(GPIO_RegDef_t *pGPIOx, uint8_t EnOrDi)
 {
-  if (EnOrDi == ENABLE) {
+  if (EnOrDi == ENABLE)
+  {
     switch ((uint32_t)pGPIOx) {
     case GPIOA_BASEADDR:
       GPIOA_PCLOCK_EN();
@@ -41,8 +42,10 @@ void GPIO_PeriClockControl(GPIO_RegDef_t *pGPIOx, uint8_t EnOrDi)
     default:
       break;
     }
-  } else {
-    switch ((uint32_t)pGPIOx) {
+  } else
+  {
+    switch ((uint32_t)pGPIOx)
+    {
     case GPIOA_BASEADDR:
       GPIOA_PCLOCK_DI();
       break;
@@ -78,6 +81,8 @@ void GPIO_PeriClockControl(GPIO_RegDef_t *pGPIOx, uint8_t EnOrDi)
  */
 void GPIO_Init(GPIO_Handle_t *pGPIOHandle)
 {
+  GPIO_PeriClockControl(pGPIOHandle->pGPIOx, ENABLE);
+
   uint32_t temp = 0;
 
   if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode <= GPIO_MODE_ANALOG) {
@@ -128,7 +133,7 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle)
   pGPIOHandle->pGPIOx->OTYPER &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
   pGPIOHandle->pGPIOx->OTYPER |= temp;
 
-  if (pGPIOHandle->GPIO_PinConfig.GPIO_PinAltFunMode == GPIO_MODE_ALTFN) {
+  if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_ALTFN) {
     uint8_t temp1, temp2;
     temp1 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber / 8;
     temp2 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber % 8;
