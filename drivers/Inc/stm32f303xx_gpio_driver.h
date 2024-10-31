@@ -65,7 +65,8 @@
 /*
  * Configuration structure for GPIO pin
  */
-typedef struct {
+typedef struct
+{
   uint8_t GPIO_PinNumber;
   uint8_t GPIO_PinMode;
   uint8_t GPIO_PinSpeed;
@@ -77,7 +78,8 @@ typedef struct {
 /*
  * Handle structure for GPIO pin
  */
-typedef struct {
+typedef struct
+{
   GPIO_RegDef_t *pGPIOx;
   GPIO_PinConfig_t GPIO_PinConfig;
 } GPIO_Handle_t;
